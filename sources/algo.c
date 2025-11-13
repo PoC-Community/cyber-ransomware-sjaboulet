@@ -44,4 +44,3 @@ int core(const char *password,
     ret = algo.loop(old_file, new_file, st);
     return graceful_exit(old_file, new_file, generated_key, ret);
 }
-
